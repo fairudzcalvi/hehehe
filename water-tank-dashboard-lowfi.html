@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Water Tank Monitor - Low Fidelity</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        
+        /* Low-fi wireframe style */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border: 2px solid #333;
+            padding: 20px;
+        }
+        
+        /* Header */
+        header {
+            border-bottom: 2px solid #333;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 24px;
+            font-weight: normal;
+            border: 2px solid #333;
+            padding: 10px;
+            display: inline-block;
+        }
+        
+        .status-bar {
+            margin-top: 10px;
+            border: 2px solid #333;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .status-item {
+            border: 1px solid #666;
+            padding: 5px 10px;
+        }
+        
+        /* Main Content Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        /* Tank Display */
+        .tank-display {
+            border: 2px solid #333;
+            padding: 20px;
+        }
+        
+        .tank-visual {
+            width: 100%;
+            height: 300px;
+            border: 3px solid #333;
+            position: relative;
+            background: repeating-linear-gradient(
+                0deg,
+                #fff,
+                #fff 10px,
+                #e0e0e0 10px,
+                #e0e0e0 20px
+            );
+            margin: 20px 0;
+        }
+        
+        .water-level {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 65%;
+            background: repeating-linear-gradient(
+                0deg,
+                #4a9eff,
+                #4a9eff 10px,
+                #357abd 10px,
+                #357abd 20px
+            );
+            border-top: 3px solid #333;
+        }
+        
+        .level-percentage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: bold;
+            border: 2px solid #333;
+            padding: 10px 20px;
+            background-color: white;
+        }
+        
+        /* Info Cards */
+        .info-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .card {
+            border: 2px solid #333;
+            padding: 15px;
+        }
+        
+        .card-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #666;
+            padding-bottom: 5px;
+        }
+        
+        .card-value {
+            font-size: 24px;
+            margin: 10px 0;
+            border: 1px solid #666;
+            padding: 8px;
+            text-align: center;
+        }
+        
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            border: 1px solid #666;
+            padding: 5px;
+        }
+        
+        /* Controls Section */
+        .controls-section {
+            border: 2px solid #333;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 5px;
+        }
+        
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        
+        .control-box {
+            border: 2px solid #333;
+            padding: 15px;
+        }
+        
+        .input-group {
+            margin: 10px 0;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+        
+        .input-group input {
+            width: 100%;
+            border: 2px solid #333;
+            padding: 8px;
+            font-size: 14px;
+        }
+        
+        button {
+            border: 2px solid #333;
+            background-color: white;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        button:hover {
+            background-color: #f0f0f0;
+        }
+        
+        /* History/Log Section */
+        .history-section {
+            border: 2px solid #333;
+            padding: 20px;
+        }
+        
+        .log-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .log-table th,
+        .log-table td {
+            border: 1px solid #333;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        .log-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        
+        /* Alert Box */
+        .alert-box {
+            border: 3px solid #333;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: repeating-linear-gradient(
+                45deg,
+                #fff,
+                #fff 10px,
+                #f0f0f0 10px,
+                #f0f0f0 20px
+            );
+        }
+        
+        .alert-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .control-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>SMART WATER TANK MONITOR</h1>
+            <div class="status-bar">
+                <div class="status-item">System Status: ONLINE</div>
+                <div class="status-item">Last Update: 2 min ago</div>
+                <div class="status-item">Sensor: ACTIVE</div>
+            </div>
+        </header>
+        
+        <!-- Alert Box -->
+        <div class="alert-box">
+            <div class="alert-title">⚠ ACTIVE ALERTS</div>
+            <div>No active alerts</div>
+        </div>
+        
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Tank Display -->
+            <div class="tank-display">
+                <div class="section-title">WATER TANK STATUS</div>
+                <div class="tank-visual">
+                    <div class="water-level"></div>
+                    <div class="level-percentage">65%</div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="metric-row">
+                        <span>Current Level:</span>
+                        <strong>65 cm</strong>
+                    </div>
+                    <div class="metric-row">
+                        <span>Tank Capacity:</span>
+                        <strong>1000 L</strong>
+                    </div>
+                    <div class="metric-row">
+                        <span>Water Volume:</span>
+                        <strong>650 L</strong>
+                    </div>
+                    <div class="metric-row">
+                        <span>Tank Height:</span>
+                        <strong>100 cm</strong>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Info Cards -->
+            <div class="info-cards">
+                <div class="card">
+                    <div class="card-title">SENSOR READING</div>
+                    <div class="card-value">65 cm</div>
+                    <div class="metric-row">
+                        <span>Min Today:</span>
+                        <span>52 cm</span>
+                    </div>
+                    <div class="metric-row">
+                        <span>Max Today:</span>
+                        <span>89 cm</span>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">NOTIFICATIONS</div>
+                    <div class="metric-row">
+                        <span>SMS Sent Today:</span>
+                        <span>3</span>
+                    </div>
+                    <div class="metric-row">
+                        <span>Last SMS:</span>
+                        <span>08:45 AM</span>
+                    </div>
+                    <button>VIEW ALL</button>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">SYSTEM INFO</div>
+                    <div class="metric-row">
+                        <span>Uptime:</span>
+                        <span>48 hrs</span>
+                    </div>
+                    <div class="metric-row">
+                        <span>GSM Signal:</span>
+                        <span>Good</span>
+                    </div>
+                    <div class="metric-row">
+                        <span>Database:</span>
+                        <span>Connected</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Controls Section -->
+        <div class="controls-section">
+            <div class="section-title">THRESHOLD SETTINGS</div>
+            <div class="control-grid">
+                <div class="control-box">
+                    <div style="font-weight: bold; margin-bottom: 10px;">LOW LEVEL ALERT</div>
+                    <div class="input-group">
+                        <label>Threshold (cm):</label>
+                        <input type="number" value="20" placeholder="Enter value">
+                    </div>
+                    <div class="input-group">
+                        <label>Phone Number:</label>
+                        <input type="text" value="+639123456789" placeholder="Enter phone">
+                    </div>
+                    <button>UPDATE</button>
+                </div>
+                
+                <div class="control-box">
+                    <div style="font-weight: bold; margin-bottom: 10px;">FULL LEVEL ALERT</div>
+                    <div class="input-group">
+                        <label>Threshold (cm):</label>
+                        <input type="number" value="90" placeholder="Enter value">
+                    </div>
+                    <div class="input-group">
+                        <label>Phone Number:</label>
+                        <input type="text" value="+639123456789" placeholder="Enter phone">
+                    </div>
+                    <button>UPDATE</button>
+                </div>
+                
+                <div class="control-box">
+                    <div style="font-weight: bold; margin-bottom: 10px;">MANUAL ACTIONS</div>
+                    <button style="margin-top: 15px;">SEND TEST SMS</button>
+                    <button>REFRESH DATA</button>
+                    <button>RESET ALERTS</button>
+                    <button>CALIBRATE SENSOR</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- History/Log Section -->
+        <div class="history-section">
+            <div class="section-title">RECENT ACTIVITY LOG</div>
+            <table class="log-table">
+                <thead>
+                    <tr>
+                        <th>TIMESTAMP</th>
+                        <th>EVENT TYPE</th>
+                        <th>WATER LEVEL</th>
+                        <th>ACTION</th>
+                        <th>STATUS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2024-02-10 14:30</td>
+                        <td>Level Update</td>
+                        <td>65 cm</td>
+                        <td>Reading logged</td>
+                        <td>OK</td>
+                    </tr>
+                    <tr>
+                        <td>2024-02-10 14:00</td>
+                        <td>Level Update</td>
+                        <td>63 cm</td>
+                        <td>Reading logged</td>
+                        <td>OK</td>
+                    </tr>
+                    <tr>
+                        <td>2024-02-10 08:45</td>
+                        <td>Low Alert</td>
+                        <td>18 cm</td>
+                        <td>SMS Sent</td>
+                        <td>SENT</td>
+                    </tr>
+                    <tr>
+                        <td>2024-02-10 08:30</td>
+                        <td>Level Update</td>
+                        <td>18 cm</td>
+                        <td>Reading logged</td>
+                        <td>OK</td>
+                    </tr>
+                    <tr>
+                        <td>2024-02-09 18:20</td>
+                        <td>Full Alert</td>
+                        <td>92 cm</td>
+                        <td>SMS Sent</td>
+                        <td>SENT</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
