@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Water Tank Monitor - Low Fidelity</title>
+    <title>Smart Water Tank Monitor</title>
     <link rel="stylesheet" href="styles.css">
     <script src="notifications.js" defer></script>
+    <script src="api.js" defer></script>
 </head>
 <body>
     <div class="container">
@@ -13,16 +14,16 @@
         <header>
             <h1>SMART WATER TANK MONITOR</h1>
             <div class="status-bar">
-                <div class="status-item">System Status: ONLINE</div>
-                <div class="status-item">Last Update: 2 min ago</div>
-                <div class="status-item">Sensor: ACTIVE</div>
+                <div class="status-item">System Status: <span id="system-status"></span></span></div>
+                <div class="status-item">Last Update: <span id="last-update">--</span></div>
+                <div class="status-item">Sensor: <span id="sensor-status">ACTIVE</span></div>
             </div>
         </header>
         
         <!-- Alert Box -->
         <div class="alert-box">
             <div class="alert-title">⚠ ACTIVE ALERTS</div>
-            <div>No active alerts</div>
+            <div id="alert-message">No active alerts</div>
         </div>
         
         <!-- Main Dashboard Grid -->
@@ -31,13 +32,13 @@
             <div class="tank-display">
                 <div class="section-title">WATER TANK STATUS</div>
                 <div class="tank-visual">
-                    <div class="water-level"></div>
-                    <div class="level-percentage">65%</div>
+                    <div class="water-level" id="water-level-bar"></div>
+                    <div class="level-percentage" id="level-percentage">--%</div>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <div class="metric-row">
                         <span>Current Level:</span>
-                        <strong>65 cm</strong>
+                        <strong id="current-level">-- cm</strong>
                     </div>
                     <div class="metric-row">
                         <span>Tank Capacity:</span>
@@ -45,12 +46,9 @@
                     </div>
                     <div class="metric-row">
                         <span>Water Volume:</span>
-                        <strong>650 L</strong>
+                        <strong id="water-volume">-- L</strong>
                     </div>
-                    <div class="metric-row">
-                        <span>Tank Height:</span>
-                        <strong>100 cm</strong>
-                    </div>
+                    
                 </div>
             </div>
             
@@ -58,14 +56,14 @@
             <div class="info-cards">
                 <div class="card">
                     <div class="card-title">SENSOR READING</div>
-                    <div class="card-value">65 cm</div>
+                    <div class="card-value" id="sensor-reading">-- cm</div>
                     <div class="metric-row">
                         <span>Min Today:</span>
-                        <span>52 cm</span>
+                        <span id="min-today">-- cm</span>
                     </div>
                     <div class="metric-row">
                         <span>Max Today:</span>
-                        <span>89 cm</span>
+                        <span id="max-today">-- cm</span>
                     </div>
                 </div>
                 
@@ -86,15 +84,15 @@
                     <div class="card-title">SYSTEM INFO</div>
                     <div class="metric-row">
                         <span>Uptime:</span>
-                        <span>48 hrs</span>
+                        <span id="uptime">--</span>
                     </div>
                     <div class="metric-row">
                         <span>GSM Signal:</span>
-                        <span>Good</span>
+                        <span id="gsm-signal">--</span>
                     </div>
                     <div class="metric-row">
-                        <span>Database:</span>
-                        <span>Connected</span>
+                        <span>Server:</span>
+                        <span id="server-status">Connecting...</span>
                     </div>
                 </div>
             </div>
@@ -108,34 +106,34 @@
                     <div style="font-weight: bold; margin-bottom: 10px;">LOW LEVEL ALERT</div>
                     <div class="input-group">
                         <label>Threshold (cm):</label>
-                        <input type="number" value="20" placeholder="Enter value">
+                        <input type="number" id="low-threshold" value="20" placeholder="Enter value">
                     </div>
                     <div class="input-group">
                         <label>Phone Number:</label>
-                        <input type="text" value="+639123456789" placeholder="Enter phone">
+                        <input type="text" id="low-phone" value="+639123456789" placeholder="Enter phone">
                     </div>
-                    <button>UPDATE</button>
+                    <button id="update-low">UPDATE</button>
                 </div>
                 
                 <div class="control-box">
                     <div style="font-weight: bold; margin-bottom: 10px;">FULL LEVEL ALERT</div>
                     <div class="input-group">
                         <label>Threshold (cm):</label>
-                        <input type="number" value="90" placeholder="Enter value">
+                        <input type="number" id="high-threshold" value="90" placeholder="Enter value">
                     </div>
                     <div class="input-group">
                         <label>Phone Number:</label>
-                        <input type="text" value="+639123456789" placeholder="Enter phone">
+                        <input type="text" id="high-phone" value="+639123456789" placeholder="Enter phone">
                     </div>
-                    <button>UPDATE</button>
+                    <button id="update-high">UPDATE</button>
                 </div>
                 
                 <div class="control-box">
                     <div style="font-weight: bold; margin-bottom: 10px;">MANUAL ACTIONS</div>
-                    <button style="margin-top: 15px;">SEND TEST SMS</button>
-                    <button>REFRESH DATA</button>
-                    <button>RESET ALERTS</button>
-                    <button>CALIBRATE SENSOR</button>
+                    <button id="btn-test-sms" style="margin-top: 15px;">SEND TEST SMS</button>
+                    <button id="btn-refresh">REFRESH DATA</button>
+                    <button id="btn-reset-alerts">RESET ALERTS</button>
+                    <button id="btn-calibrate">CALIBRATE SENSOR</button>
                 </div>
             </div>
         </div>
@@ -153,42 +151,8 @@
                         <th>STATUS</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>2024-02-10 14:30</td>
-                        <td>Level Update</td>
-                        <td>65 cm</td>
-                        <td>Reading logged</td>
-                        <td>OK</td>
-                    </tr>
-                    <tr>
-                        <td>2024-02-10 14:00</td>
-                        <td>Level Update</td>
-                        <td>63 cm</td>
-                        <td>Reading logged</td>
-                        <td>OK</td>
-                    </tr>
-                    <tr>
-                        <td>2024-02-10 08:45</td>
-                        <td>Low Alert</td>
-                        <td>18 cm</td>
-                        <td>SMS Sent</td>
-                        <td>SENT</td>
-                    </tr>
-                    <tr>
-                        <td>2024-02-10 08:30</td>
-                        <td>Level Update</td>
-                        <td>18 cm</td>
-                        <td>Reading logged</td>
-                        <td>OK</td>
-                    </tr>
-                    <tr>
-                        <td>2024-02-09 18:20</td>
-                        <td>Full Alert</td>
-                        <td>92 cm</td>
-                        <td>SMS Sent</td>
-                        <td>SENT</td>
-                    </tr>
+                <tbody id="activity-log">
+                    <tr><td colspan="5" style="text-align:center; color:#999;">Waiting for data...</td></tr>
                 </tbody>
             </table>
         </div>

@@ -1,0 +1,13 @@
+{
+  "name": "water-tank-dashboard",
+  "version": "1.0.0",
+  "description": "Smart water tank monitor backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "sql.js": "^1.14.1"
+  }
+}
