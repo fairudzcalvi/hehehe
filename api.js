@@ -1,4 +1,4 @@
-const API_BASE = 'https://your-app.onrender.com/api';
+const API_BASE = '/api';
 const TANK_HEIGHT_CM = 100;
 const TANK_CAPACITY_L = 1000;
 const POLL_INTERVAL = 5000;
