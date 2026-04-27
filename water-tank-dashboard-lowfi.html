@@ -14,9 +14,10 @@
         <header>
             <h1>SMART WATER TANK MONITOR</h1>
             <div class="status-bar">
-                <div class="status-item">System Status: <span id="system-status"></span></span></div>
+                <div class="status-item">System Status: <span id="system-status"></span></div>
                 <div class="status-item">Last Update: <span id="last-update">--</span></div>
                 <div class="status-item">Sensor: <span id="sensor-status">ACTIVE</span></div>
+                <div class="status-item">GSM Signal: <span id="gsm-signal-header">--</span></div>
             </div>
         </header>
         
@@ -38,7 +39,7 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <div class="metric-row">
                         <span>Current Level:</span>
-                        <strong id="current-level">-- cm</strong>
+                        <strong id="current-level">--%</strong>
                     </div>
                     <div class="metric-row">
                         <span>Tank Capacity:</span>
@@ -48,7 +49,6 @@
                         <span>Water Volume:</span>
                         <strong id="water-volume">-- L</strong>
                     </div>
-                    
                 </div>
             </div>
             
@@ -71,13 +71,18 @@
                     <div class="card-title">NOTIFICATIONS</div>
                     <div class="metric-row">
                         <span>SMS Sent Today:</span>
-                        <span id="sms-count">3</span>
+                        <span id="sms-count">0</span>
                     </div>
                     <div class="metric-row">
                         <span>Last SMS:</span>
-                        <span id="last-sms">08:45 AM</span>
+                        <span id="last-sms">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span>GSM Signal:</span>
+                        <span id="gsm-signal-card">--</span>
                     </div>
                     <button id="view-notifications">VIEW ALL</button>
+                    <button id="btn-test-sms-card" style="margin-top: 5px;">SEND TEST SMS</button>
                 </div>
                 
                 <div class="card">
@@ -87,8 +92,8 @@
                         <span id="uptime">--</span>
                     </div>
                     <div class="metric-row">
-                        <span>GSM Signal:</span>
-                        <span id="gsm-signal">--</span>
+                        <span>Last SMS Status:</span>
+                        <span id="last-sms-status">--</span>
                     </div>
                     <div class="metric-row">
                         <span>Server:</span>
@@ -105,8 +110,8 @@
                 <div class="control-box">
                     <div style="font-weight: bold; margin-bottom: 10px;">LOW LEVEL ALERT</div>
                     <div class="input-group">
-                        <label>Threshold (cm):</label>
-                        <input type="number" id="low-threshold" value="20" placeholder="Enter value">
+                        <label>Threshold (%):</label>
+                        <input type="number" id="low-threshold" value="20" placeholder="Enter percentage">
                     </div>
                     <div class="input-group">
                         <label>Phone Number:</label>
@@ -118,8 +123,8 @@
                 <div class="control-box">
                     <div style="font-weight: bold; margin-bottom: 10px;">FULL LEVEL ALERT</div>
                     <div class="input-group">
-                        <label>Threshold (cm):</label>
-                        <input type="number" id="high-threshold" value="90" placeholder="Enter value">
+                        <label>Threshold (%):</label>
+                        <input type="number" id="high-threshold" value="90" placeholder="Enter percentage">
                     </div>
                     <div class="input-group">
                         <label>Phone Number:</label>
@@ -129,25 +134,44 @@
                 </div>
                 
                 <div class="control-box">
-                    <div style="font-weight: bold; margin-bottom: 10px;">MANUAL ACTIONS</div>
-                    <button id="btn-test-sms" style="margin-top: 15px;">SEND TEST SMS</button>
-                    <button id="btn-refresh">REFRESH DATA</button>
-                    <button id="btn-reset-alerts">RESET ALERTS</button>
-                    <button id="btn-calibrate">CALIBRATE SENSOR</button>
+                    <div style="font-weight: bold; margin-bottom: 10px;">SMS ACTIONS</div>
+                    <button id="btn-test-sms" style="margin-top: 15px;">📱 SEND TEST SMS</button>
+                    <button id="btn-refresh">🔄 REFRESH DATA</button>
+                    <button id="btn-reset-alerts">🔕 RESET ALERTS</button>
+                    <button id="btn-check-signal">📶 CHECK GSM SIGNAL</button>
                 </div>
             </div>
         </div>
         
-        <!-- History/Log Section -->
+        <!-- SMS Log Section -->
         <div class="history-section">
-            <div class="section-title">RECENT ACTIVITY LOG</div>
+            <div class="section-title">📨 SMS DELIVERY LOG</div>
+            <table class="log-table">
+                <thead>
+                    <tr>
+                        <th>TIMESTAMP</th>
+                        <th>TYPE</th>
+                        <th>RECIPIENT</th>
+                        <th>MESSAGE</th>
+                        <th>STATUS</th>
+                    </tr>
+                </thead>
+                <tbody id="sms-log">
+                    <tr><td colspan="5" style="text-align:center; color:#999;">Waiting for SMS data...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Activity Log Section -->
+        <div class="history-section" style="margin-top: 20px;">
+            <div class="section-title">📊 WATER LEVEL HISTORY</div>
             <table class="log-table">
                 <thead>
                     <tr>
                         <th>TIMESTAMP</th>
                         <th>EVENT TYPE</th>
-                        <th>WATER LEVEL</th>
-                        <th>ACTION</th>
+                        <th>LEVEL %</th>
+                        <th>VOLUME (L)</th>
                         <th>STATUS</th>
                     </tr>
                 </thead>
@@ -166,20 +190,25 @@
                 <button id="close-modal" class="close-btn">&times;</button>
             </div>
             <div class="modal-body">
-                <table class="log-table">
-                    <thead>
-                        <tr>
-                            <th>DATE & TIME</th>
-                            <th>TYPE</th>
-                            <th>MESSAGE</th>
-                            <th>RECIPIENT</th>
-                            <th>STATUS</th>
-                        </tr>
-                    </thead>
-                    <tbody id="notifications-list">
-                        <!-- Notifications will be populated here -->
-                    </tbody>
-                </table>
+                <div class="filter-bar" style="margin-bottom: 15px; display: flex; gap: 10px;">
+                    <select id="filter-type">
+                        <option value="all">All Types</option>
+                        <option value="Low Alert">Low Alert</option>
+                        <option value="Full Alert">Full Alert</option>
+                        <option value="System">System</option>
+                        <option value="Test SMS">Test SMS</option>
+                    </select>
+                    <select id="filter-status">
+                        <option value="all">All Status</option>
+                        <option value="SENT">Sent</option>
+                        <option value="FAILED">Failed</option>
+                        <option value="PENDING">Pending</option>
+                    </select>
+                    <span style="margin-left: auto;">Total: <span id="total-count">0</span> | Today: <span id="today-count">0</span></span>
+                </div>
+                <div id="notifications-list">
+                    <!-- Notifications will be populated here -->
+                </div>
             </div>
         </div>
     </div>

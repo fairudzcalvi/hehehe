@@ -325,7 +325,9 @@ button:active {
 .modal-content {
     background-color: white;
     margin: 5% auto;
-    border: 3px solid #333;
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     width: 90%;
     max-width: 1000px;
     max-height: 80vh;
@@ -333,36 +335,214 @@ button:active {
 }
 
 .modal-header {
-    border-bottom: 2px solid #333;
-    padding: 20px;
+    border-bottom: 2px solid #e2e8f0;
+    padding: 20px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: sticky;
+    top: 0;
+    background: white;
+    border-radius: 16px 16px 0 0;
+    z-index: 1;
 }
 
 .modal-header h2 {
     font-size: 20px;
-    font-weight: bold;
+    font-weight: 700;
+    color: #2d3748;
     margin: 0;
 }
 
 .close-btn {
-    border: 2px solid #333;
-    background-color: white;
-    font-size: 28px;
+    border: none;
+    background: #f7fafc;
+    color: #4a5568;
+    font-size: 22px;
     font-weight: bold;
     cursor: pointer;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     padding: 0;
     margin: 0;
     line-height: 1;
+    border-radius: 50%;
+    transition: background 0.2s ease;
 }
 
 .close-btn:hover {
-    background-color: #f0f0f0;
+    background-color: #e2e8f0;
+    transform: none;
+    box-shadow: none;
 }
 
 .modal-body {
     padding: 20px;
+}
+
+/* Add to existing styles.css */
+
+/* SMS Status Colors */
+.status-sent {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.status-failed {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* GSM Signal Indicator */
+#gsm-signal-header, #gsm-signal-card {
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+/* Filter Bar */
+.filter-bar {
+    background-color: #f7fafc;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.filter-bar select {
+    padding: 8px 12px;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    background-color: white;
+    font-size: 14px;
+}
+
+/* SMS Log Table */
+#sms-log td {
+    word-break: break-word;
+}
+
+/* Card Button Styles */
+#btn-test-sms-card {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+}
+
+#btn-test-sms-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+}
+
+/* Notification Cards */
+#notifications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.notification-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px;
+    border-radius: 10px;
+    background-color: #f7fafc;
+    border-left: 4px solid #cbd5e0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    transition: box-shadow 0.2s ease;
+}
+
+.notification-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Type-based border colors */
+.notification-card.low-alert  { border-left-color: #f6ad55; background-color: #fffaf0; }
+.notification-card.full-alert { border-left-color: #63b3ed; background-color: #ebf8ff; }
+.notification-card.system     { border-left-color: #9f7aea; background-color: #faf5ff; }
+.notification-card.test-sms   { border-left-color: #68d391; background-color: #f0fff4; }
+
+.notification-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.notification-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.notification-type {
+    font-weight: 700;
+    font-size: 13px;
+    color: #2d3748;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.notification-time {
+    font-size: 12px;
+    color: #718096;
+}
+
+.notification-message {
+    font-size: 14px;
+    color: #4a5568;
+    margin-bottom: 8px;
+    word-break: break-word;
+}
+
+.notification-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.notification-recipient {
+    font-size: 13px;
+    color: #718096;
+}
+
+.notification-status {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+}
+
+.notification-status.status-sent   { background-color: #c6f6d5; color: #276749; }
+.notification-status.status-failed { background-color: #fed7d7; color: #9b2c2c; }
+.notification-status.status-pending { background-color: #fefcbf; color: #744210; }
+
+.no-notifications {
+    text-align: center;
+    padding: 40px;
+    color: #a0aec0;
+    font-size: 15px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-bar select {
+        width: 100%;
+    }
+
+    .notification-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
