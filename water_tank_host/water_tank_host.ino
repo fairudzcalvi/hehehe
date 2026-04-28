@@ -17,9 +17,9 @@ HardwareSerial sim800(2);   // UART2
 
 // ============================================================
 //  WiFi CREDENTIALS  (your home/router WiFi)
-// ============================================================
-const char* wifi_ssid     = "Huawei 50 pro mate";
-const char* wifi_password = "dikoalamss";
+// =======================================================Si=====
+const char* wifi_ssid     = "Kitchen_Love 5G";
+const char* wifi_password = "Siopa0Guisad0";
 const char* serverURL     = "https://water-tank-mon-system.onrender.com/api/water-level";
 
 // ============================================================
